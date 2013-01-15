@@ -116,12 +116,15 @@ pqxx::result table::_query(std::string sql_query)
     return res;
 }
 
-std::string table::query_select(select s, from f, where w)
+std::string table::query_select(select s, from f, where w, group_by g, order_by o, limit l)
 {
     std::string query;
     query += (std::string) s;
     query += " " + (std::string) f;
     query += " " + (std::string) w;
+    query += " " + (std::string) g;
+    query += " " + (std::string) o;
+    query += " " + (std::string) l;
 
     return query;
 }

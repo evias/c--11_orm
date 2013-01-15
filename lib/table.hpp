@@ -50,7 +50,7 @@ namespace dbo {
 
         static void set_connection_data(std::string,std::string,std::string,std::string);
 
-        std::string query_select(select, from, where);
+        std::string query_select(select, from, where, group_by = {}, order_by = {}, limit = {});
 
     private:
         pqxx::result _query(std::string);
