@@ -31,13 +31,6 @@ int main(int argc, char** argv)
     table t_errpkeys("table3", {"field_1", "field_2", "field_3"}, {"field_4"});
      */
 
-    //t_nopkey.query<std::string>("select firstname from table_nopkey");
-
-    std::cout << t_nopkey.query_select(select{"firstname", "lastname"},
-                                       from{"table_nopkey"},
-                                       where{"email='gsaive@databay.de'"})
-              << std::endl;
-
     std::cout << "Hello, world!" << std::endl;
 
     return 0;
