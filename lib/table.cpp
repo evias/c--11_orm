@@ -1,4 +1,5 @@
 #include "table.hpp"
+#include "query.hpp"
 
 #include <iostream>
 #include <algorithm>
@@ -111,4 +112,14 @@ pqxx::result table::_query(std::string sql_query)
 //    }
 
     return res;
+}
+
+std::string table::query_select(select s, from f, where w)
+{
+    std::string query;
+    query += (std::string) s;
+    query += " " + (std::string) f;
+    query += " " + (std::string) w;
+
+    return query;
 }

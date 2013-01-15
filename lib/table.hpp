@@ -14,9 +14,14 @@
 #include <iostream>
 #include <pqxx/pqxx>
 #include "row.hpp"
+#include "query.hpp"
 
 namespace evias {
 namespace dbo {
+
+    using evias::dbo::select;
+    using evias::dbo::from;
+    using evias::dbo::where;
 
     /**
      * Database table class
@@ -44,6 +49,8 @@ namespace dbo {
         virtual ~table();
 
         static void set_connection_data(std::string,std::string,std::string,std::string);
+
+        std::string query_select(select, from, where);
 
     private:
         pqxx::result _query(std::string);
