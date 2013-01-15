@@ -1,0 +1,3 @@
+build/*.o
+c++11_orm
+nbproject
