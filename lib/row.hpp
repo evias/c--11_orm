@@ -26,6 +26,7 @@ namespace dbo {
      *
      * @example
      * evias::dbo::row<int,char> alphabet_a(make_tuple(1, 'A'));
+     * evias::dbo::row<int,string,string> user_greg(make_tuple(1, "greg@evias.be", "Greg"));
      **/
     template <typename ... _fields_t>
     class row
@@ -38,13 +39,16 @@ namespace dbo {
         virtual ~row() = default;
 
         row(std::tuple<_fields_t...> vals)
-            : values_(vals) {};
+            : values_(vals)
+        {};
 
         row(const row& rhs)
-            : values_(rhs.values_) {};
+            : values_(rhs.values_)
+        {};
 
         row(row&& rhs)
-            : values_(std::move(rhs.values_)) {};
+            : values_(std::move(rhs.values_))
+        {};
 
         row& operator=(const row& rhs)
         {
