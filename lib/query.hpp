@@ -18,11 +18,21 @@ namespace evias {
 namespace dbo {
 
     struct select;
+    struct update;
+    struct del;
     struct from;
     struct where;
     struct group_by;
     struct order_by;
     struct limit;
+
+    /**
+     * Statement part interface
+     **/
+    struct stmt_part
+    {
+        virtual operator std::string() = 0;
+    };
 
     /**
      * SQL SELECT statement struct
@@ -33,12 +43,13 @@ namespace dbo {
      * simple cast to string type.
      */
     struct select
+        : public stmt_part
     {
         select(std::initializer_list<std::string> l)
             : fields_(l)
         {};
 
-        operator std::string()
+        operator std::string() override
         {
             std::string str;
             int i = 0;
@@ -54,6 +65,60 @@ namespace dbo {
     };
 
     /**
+     * SQL UPDATE statement struct
+     *
+     * This structure allows easily defining a fields/values
+     * combinations list to update values in the query.
+     * The operator string() allows performing a
+     * simple cast to string type.
+     */
+    struct update
+        : public stmt_part
+    {
+        update(std::map<std::string, std::string> fields_values)
+            : values_(fields_values)
+        {};
+
+        operator std::string() override
+        {
+            std::string str;
+            int i = 0;
+            std::for_each(values_.begin(), values_.end(), [&i, &str, this](std::pair<std::string,std::string> item) {
+                /* Careful, there is no type cast done here to provide with a valid SQL key/value combination. */
+                str += ((i > 0) ? ", " : "") + item.first + "=" + item.second;
+                ++i;
+            });
+            return str.size() > 0 ? "UPDATE " + str : "";
+        }
+
+    private:
+        std::map<std::string,std::string> values_;
+    };
+
+    /**
+     * SQL DELETE statement struct
+     *
+     * The operator string() allows performing a
+     * simple cast to string type.
+     */
+    struct del
+        : public stmt_part
+    {
+        del() = default;
+
+        /**
+         * SQL DELETE statement does not need any
+         * specific data treatment, everything is
+         * appended to the "DELETE" token directly
+         * such that the FROM and WHERE part are set.
+         */
+        operator std::string() override
+        {
+            return "DELETE ";
+        }
+    };
+
+    /**
      * SQL FROM statement struct
      *
      * This structure allows easily defining a tables
@@ -62,12 +127,13 @@ namespace dbo {
      * simple cast to string type.
      */
     struct from
+        : public stmt_part
     {
         from(std::initializer_list<std::string> l)
             : parts_(l)
         {}
 
-        operator std::string()
+        operator std::string() override
         {
             std::string str;
             int i = 0;
@@ -91,12 +157,13 @@ namespace dbo {
      * simple cast to string type.
      */
     struct where
+        : public stmt_part
     {
         where(std::initializer_list<std::string> l)
             : conditions_(l)
         {}
 
-        operator std::string()
+        operator std::string() override
         {
             std::string str;
             int i = 0;
@@ -120,12 +187,13 @@ namespace dbo {
      * simple cast to string type.
      */
     struct group_by
+        : public stmt_part
     {
         group_by(std::initializer_list<std::string> l)
             : fields_(l)
         {}
 
-        operator std::string()
+        operator std::string() override
         {
             std::string str;
             int i = 0;
@@ -149,12 +217,13 @@ namespace dbo {
      * simple cast to string type.
      */
     struct order_by
+        : public stmt_part
     {
         order_by(std::initializer_list<std::string> l)
             : parts_(l)
         {}
 
-        operator std::string()
+        operator std::string() override
         {
             std::string str;
             int i = 0;
@@ -178,6 +247,7 @@ namespace dbo {
      * simple cast to string type.
      */
     struct limit
+        : public stmt_part
     {
         limit(std::initializer_list<int> l)
         {
@@ -196,7 +266,7 @@ namespace dbo {
             : limit_(lim), offset_(offset)
         {}
 
-        operator std::string()
+        operator std::string() override
         {
             if (limit_ == 0 && offset_ == 0)
                 return "";
