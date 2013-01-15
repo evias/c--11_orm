@@ -46,8 +46,10 @@ table::table(std::string name,
     std::vector<std::string> intersection;
     std::for_each(pkeys.begin(), pkeys.end(), [&intersection,this] (std::string item) {
         for (auto it : this->fields_)
-            if (it == item)
+            if (it == item) {
                 intersection.push_back(it);
+                break;
+            }
     });
 
     if (intersection.size() != pkeys.size())
