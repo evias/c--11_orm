@@ -83,48 +83,5 @@ void table::set_connection_data(std::string host, std::string db, std::string us
     conn_policy_ = "host=" + host
                  + " dbname=" + db
                  + " user=" + user
-                 + " pass=" + pass;
-}
-
-pqxx::result table::_query(std::string sql_query)
-{
-//    time_t              timestamp;
-//    std::string         trxKey;
-//    std::stringstream   trxSeed;
-//    unsigned long       timeSeed;
-//
-//    time (&timestamp);
-//    timeSeed= (unsigned long) timestamp;
-//    trxSeed << "__evias_dbo_table_transaction_"
-//            << timeSeed
-//            << "__";
-//    trxKey  = trxSeed.str();
-//
-//    pqxx::connection    db(conn_policy_);
-    pqxx::result        res;
-//    pqxx::transaction<> tr(db, trxKey);
-//
-//    try {
-//        res = tr.exec(sql_query);
-//
-//        tr.commit();
-//    }
-//    catch (const std::exception& e) {
-//        std::cerr << "-- caught an error.. aborting : " << e.what() << std::endl;
-//    }
-
-    return res;
-}
-
-std::string table::query_select(select s, from f, where w, group_by g, order_by o, limit l)
-{
-    std::string query;
-    query += (std::string) s;
-    query += " " + (std::string) f;
-    query += " " + (std::string) w;
-    query += " " + (std::string) g;
-    query += " " + (std::string) o;
-    query += " " + (std::string) l;
-
-    return query;
+                 + " password=" + pass;
 }

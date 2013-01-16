@@ -13,8 +13,13 @@
 #include <initializer_list>
 #include <tuple>
 #include <map>
+#include <sstream>
+#include <ctime>
+#include <iostream>
+#include <pqxx/pqxx>
 #include "query.hpp"
 #include "for_each.hpp"
+#include "row.hpp"
 
 namespace evias {
 namespace dbo {
@@ -71,10 +76,11 @@ namespace dbo {
      * statement<update,from,where,limit> stmt_by_cp = stmt_config;
      **/
     template <typename ... _parts_t>
-    struct statement
+    class statement
     {
         std::tuple<_parts_t...> parts_;
 
+    public:
         statement(std::tuple<_parts_t...> list)
             : parts_(list)
         {
@@ -116,7 +122,34 @@ namespace dbo {
             return func_store_to_string::str_;
         }
 
-        /* XXX execute(db_connector) */
+        pqxx::result execute(std::string host, std::string dbname, std::string user, std::string pass)
+        {
+            time_t              timestamp;
+            std::string         trxKey;
+            std::stringstream   trxSeed;
+            unsigned long       timeSeed;
+
+            time (&timestamp);
+            timeSeed= (unsigned long) timestamp;
+            trxSeed << "__evias_dbo_statement_transaction_"
+                    << timeSeed
+                    << "__";
+            trxKey  = trxSeed.str();
+
+            pqxx::connection    db("host=" + host + " dbname=" + dbname + " user=" + user + " password=" + pass);
+            pqxx::result        res;
+            pqxx::transaction<> tr(db, trxKey);
+
+            try {
+                res = tr.exec((std::string) *this);
+                tr.commit();
+            }
+            catch (const std::exception& e) {
+                std::cerr << "-- caught an error.. aborting : " << e.what() << std::endl;
+            }
+
+            return res;
+        };
     };
 
 }
