@@ -8,7 +8,7 @@ CXX_OPTS = --std=c++0x -Ilib/ -I/usr/include/pqxx
 LINK_OPTS = -L/usr/lib -lpq -lpqxx
 
 CORE = build/main.o
-ORM_OBJECTS = build/row.o build/table.o
+ORM_OBJECTS = build/statement.o build/row.o build/table.o
 
 # Makefile rules
 clean :
@@ -24,5 +24,6 @@ all : buildLib
 
 buildLib :
 	@echo " "
+	${CXX} ${CXX_OPTS} ${LINK_OPTS} -c ${SRC_DIR}/statement.cpp -o build/statement.o
 	${CXX} ${CXX_OPTS} ${LINK_OPTS} -c ${SRC_DIR}/row.cpp -o build/row.o
 	${CXX} ${CXX_OPTS} -c ${SRC_DIR}/table.cpp ${LINK_OPTS} -o build/table.o

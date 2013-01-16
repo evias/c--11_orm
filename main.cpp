@@ -10,6 +10,7 @@
 #include <string>
 #include "table.hpp"
 #include "query.hpp"
+#include "statement.hpp"
 
 int main(int argc, char** argv)
 {
@@ -17,6 +18,8 @@ int main(int argc, char** argv)
     using evias::dbo::select;
     using evias::dbo::from;
     using evias::dbo::where;
+    using evias::dbo::limit;
+    using evias::dbo::statement;
 
     table::set_connection_data("localhost", "db_evias", "root", "");
 
