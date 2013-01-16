@@ -3,8 +3,6 @@
 
 #include <iostream>
 #include <algorithm>
-#include <sstream>
-#include <ctime>
 #include <pqxx/pqxx>
 
 using namespace evias;
@@ -76,12 +74,4 @@ table::table(table&& rval)
       fields_(std::move(rval.fields_)),
       pkeys_(std::move(rval.pkeys_))
 {
-}
-
-void table::set_connection_data(std::string host, std::string db, std::string user, std::string pass)
-{
-    conn_policy_ = "host=" + host
-                 + " dbname=" + db
-                 + " user=" + user
-                 + " password=" + pass;
 }

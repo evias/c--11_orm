@@ -22,8 +22,6 @@ int main(int argc, char** argv)
     using evias::dbo::limit;
     using evias::dbo::statement;
 
-    table::set_connection_data("localhost", "db_evias", "postgres", "sesamopen");
-
     /* Uncomment to test the breaking condition:
      * - Primary key "field_4" is not listed in fields.
     table t_errpkeys("table3", {"field_1", "field_2", "field_3"}, {"field_4"});
@@ -47,7 +45,6 @@ int main(int argc, char** argv)
               << std::endl;
     for (auto row : res) {
         std::cout << "My type is: " << typeid(row).name() << std::endl;
-
         std::cout << row["firstname"] << " " << row["lastname"] << std::endl;
     }
 

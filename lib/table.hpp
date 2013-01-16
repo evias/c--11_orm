@@ -33,8 +33,6 @@ namespace dbo {
         std::vector<std::string>  pkeys_ = {};
         std::vector<std::string>  fields_ = {};
 
-        static std::string conn_policy_;
-
     public:
         table() = default;
         table(std::string,std::vector<std::string>);
@@ -47,9 +45,6 @@ namespace dbo {
         table(table&&);
 
         virtual ~table();
-
-        static void set_connection_data(std::string,std::string,std::string,std::string);
-
     };
 
 }
