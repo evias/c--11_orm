@@ -17,6 +17,7 @@
 namespace evias {
 namespace dbo {
 
+    struct stmt_part;
     struct select;
     struct update;
     struct del;
@@ -43,7 +44,7 @@ namespace dbo {
      * simple cast to string type.
      */
     struct select
-        : public stmt_part
+        : stmt_part
     {
         select(std::initializer_list<std::string> l)
             : fields_(l)
@@ -73,7 +74,7 @@ namespace dbo {
      * simple cast to string type.
      */
     struct update
-        : public stmt_part
+        : stmt_part
     {
         update(std::map<std::string, std::string> fields_values)
             : values_(fields_values)
@@ -102,7 +103,7 @@ namespace dbo {
      * simple cast to string type.
      */
     struct del
-        : public stmt_part
+        : stmt_part
     {
         del() = default;
 
@@ -127,7 +128,7 @@ namespace dbo {
      * simple cast to string type.
      */
     struct from
-        : public stmt_part
+        : stmt_part
     {
         from(std::initializer_list<std::string> l)
             : parts_(l)
@@ -157,7 +158,7 @@ namespace dbo {
      * simple cast to string type.
      */
     struct where
-        : public stmt_part
+        : stmt_part
     {
         where(std::initializer_list<std::string> l)
             : conditions_(l)
@@ -187,7 +188,7 @@ namespace dbo {
      * simple cast to string type.
      */
     struct group_by
-        : public stmt_part
+        : stmt_part
     {
         group_by(std::initializer_list<std::string> l)
             : fields_(l)
@@ -217,7 +218,7 @@ namespace dbo {
      * simple cast to string type.
      */
     struct order_by
-        : public stmt_part
+        : stmt_part
     {
         order_by(std::initializer_list<std::string> l)
             : parts_(l)
@@ -247,13 +248,13 @@ namespace dbo {
      * simple cast to string type.
      */
     struct limit
-        : public stmt_part
+        : stmt_part
     {
         limit(std::initializer_list<int> l)
         {
             std::vector<int> v = l;
             if (v.size() < 2) {
-                limit_  = 0;
+                limit_  = v.empty() ? 0 : v.at(0);
                 offset_ = 0;
             }
             else {
