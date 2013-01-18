@@ -8,6 +8,9 @@
 #ifndef FOR_EACH_HPP
 #define	FOR_EACH_HPP
 
+#include <algorithm>
+#include <tuple>
+
 namespace evias {
 namespace dbo {
 

@@ -50,6 +50,10 @@ namespace dbo {
             : fields_(l)
         {};
 
+        select(std::vector<std::string> f)
+            : fields_(f)
+        {};
+
         operator std::string() override
         {
             std::string str;
@@ -79,6 +83,16 @@ namespace dbo {
         update(std::map<std::string, std::string> fields_values)
             : values_(fields_values)
         {};
+
+        update(std::initializer_list<std::string> l)
+        {
+            for (auto line : l) {
+                std::string p1 = line.substr(0, line.find("="));
+                std::string p2 = line.substr(line.find("=") + 1);
+
+                values_.insert(std::make_pair(p1, p2));
+            }
+        };
 
         operator std::string() override
         {
@@ -134,6 +148,10 @@ namespace dbo {
             : parts_(l)
         {}
 
+        from(std::vector<std::string> p)
+            : parts_(p)
+        {}
+
         operator std::string() override
         {
             std::string str;
@@ -164,6 +182,10 @@ namespace dbo {
             : conditions_(l)
         {}
 
+        where(std::vector<std::string> c)
+            : conditions_(c)
+        {}
+
         operator std::string() override
         {
             std::string str;
@@ -172,7 +194,7 @@ namespace dbo {
                 str += ((i > 0) ? " AND " : "") + item;
                 ++i;
             });
-            return str.size() > 0 ? "WHERE " + str : "";
+            return str.size() > 0 ? "WHERE " + str : "WHERE TRUE";
         }
 
     private:
@@ -192,6 +214,10 @@ namespace dbo {
     {
         group_by(std::initializer_list<std::string> l)
             : fields_(l)
+        {}
+
+        group_by(std::vector<std::string> f)
+            : fields_(f)
         {}
 
         operator std::string() override
@@ -222,6 +248,10 @@ namespace dbo {
     {
         order_by(std::initializer_list<std::string> l)
             : parts_(l)
+        {}
+
+        order_by(std::vector<std::string> p)
+            : parts_(p)
         {}
 
         operator std::string() override
