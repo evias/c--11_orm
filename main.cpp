@@ -22,33 +22,26 @@ int main(int argc, char** argv)
     using evias::dbo::limit;
     using evias::dbo::statement;
 
+    std::cout << "Hello, world!" << std::endl;
+
     /* Uncomment to test the breaking condition:
      * - Primary key "field_4" is not listed in fields.
     table t_errpkeys("table3", {"field_1", "field_2", "field_3"}, {"field_4"});
      */
 
-    table t_nopkey("table_nopkey",
-            {"firstname", "lastname", "email"});
-    table t_pkeys("table_pkeys",
-            {"user_id", "email", "firstname"},
-            {"user_id"});
+    table::set_connection_config("host=localhost dbname=db_evias user=postgres password=sesamopen");
 
-    auto stmt = statement<select,from,where>(std::tuple<select,from,where>{
-        select{"firstname", "lastname"},
-        from{"user_obj"},
-        where{"email LIKE 'bart%'"}
-    });
+    table users("user_obj", std::vector<std::string>{
+        "id_user",
+        "firstname",
+        "lastname",
+        "email",
+        "date_created",
+        "date_updated"});
 
-    pqxx::result res = stmt.execute("localhost", "db_evias", "postgres", "sesamopen");
+    users.select(where{});
 
-    std::cout << "Result for query: '" << res.query() << "'"
-              << std::endl;
-    for (auto row : res) {
-        std::cout << "My type is: " << typeid(row).name() << std::endl;
-        std::cout << row["firstname"] << " " << row["lastname"] << std::endl;
-    }
-
-    std::cout << "Hello, world!" << std::endl;
+    std::cout << "Goodbye, world!" << std::endl;
 
     return 0;
 }

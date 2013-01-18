@@ -28,6 +28,10 @@ namespace dbo {
      **/
     class table
     {
+        static std::string  conn_policy_;
+
+        void _check_connection();
+
     protected :
         std::string table_ = "";
         std::vector<std::string>  pkeys_ = {};
@@ -45,6 +49,10 @@ namespace dbo {
         table(table&&);
 
         virtual ~table();
+
+        static void set_connection_config(std::string);
+
+        pqxx::result select(where, group_by = {}, order_by = {}, limit = {});
     };
 
 }

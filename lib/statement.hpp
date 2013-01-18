@@ -16,6 +16,7 @@
 #include <sstream>
 #include <ctime>
 #include <iostream>
+#include <stdexcept>
 #include <pqxx/pqxx>
 #include "query.hpp"
 #include "for_each.hpp"
@@ -23,9 +24,6 @@
 
 namespace evias {
 namespace dbo {
-
-    using evias::dbo::for_each;
-    using evias::dbo::func_store_to_string;
 
     /**
      * Statement build structure
@@ -81,6 +79,8 @@ namespace dbo {
         std::tuple<_parts_t...> parts_;
 
     public:
+        static std::string      policy_;
+
         statement(std::tuple<_parts_t...> list)
             : parts_(list)
         {
@@ -116,14 +116,20 @@ namespace dbo {
 
         operator std::string()
         {
+            using evias::dbo::for_each;
+            using evias::dbo::func_store_to_string;
+
             func_store_to_string::str_ = "";
             for_each(parts_, func_store_to_string());
 
             return func_store_to_string::str_;
         }
 
-        pqxx::result execute(std::string host, std::string dbname, std::string user, std::string pass)
+        pqxx::result operator()()
         {
+            if (policy_.empty())
+                throw std::logic_error("You have to set a connection policy.");
+
             time_t              timestamp;
             std::string         trxKey;
             std::stringstream   trxSeed;
@@ -136,11 +142,12 @@ namespace dbo {
                     << "__";
             trxKey  = trxSeed.str();
 
-            pqxx::connection    db("host=" + host + " dbname=" + dbname + " user=" + user + " password=" + pass);
+            pqxx::connection    db(policy_);
             pqxx::result        res;
             pqxx::transaction<> tr(db, trxKey);
 
             try {
+                /* Calls operator std::string() */
                 res = tr.exec((std::string) *this);
                 tr.commit();
             }
@@ -151,6 +158,9 @@ namespace dbo {
             return res;
         };
     };
+
+    template <typename ... _parts_t>
+    std::string statement<_parts_t...>::policy_ = "";
 
 }
 }

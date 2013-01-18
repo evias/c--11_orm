@@ -24,6 +24,6 @@ all : buildLib
 
 buildLib :
 	@echo " "
-	${CXX} ${CXX_OPTS} -c ${SRC_DIR}/statement.cpp -o build/statement.o
+	${CXX} ${CXX_OPTS} -c ${SRC_DIR}/for_each.cpp -o build/statement.o
 	${CXX} ${CXX_OPTS} -c ${SRC_DIR}/row.cpp -o build/row.o
 	${CXX} ${CXX_OPTS} -c ${SRC_DIR}/table.cpp -o build/table.o
