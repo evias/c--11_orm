@@ -11,6 +11,8 @@
 
 int main(int argc, char** argv)
 {
+    table::set_connection_config("host=localhost,dbname=db_evias,user=psqlu,password=opendev");
+
     std::cout << "Hello, world!" << std::endl;
     std::cout << dbo::user::fields.size() << std::endl;
     std::cout << "Goodbye, world!" << std::endl;
