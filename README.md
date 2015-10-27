@@ -2,8 +2,7 @@
 
 Some of the features may be buggy or their implementation may be incomplete.
 This has started as a hobbie development, helping me for a faster development
-of applications using C++/C++11. Bugs can be reported by mail to
-<greg[ at ]evias.be>.
+of applications using C++/C++11.
 
 This project illustrates the easiness of implementing a C++0x & PostgreSQL
 object relational mapping pattern. The goal of this project is to provide
@@ -31,6 +30,14 @@ To execute the project binary, you execute the following
 command :
 
     ./c++11_orm
+
+Compiling your own projects with this library will be done simplier
+than it is now. In fact, for now the library is not yet header-only
+as you need to compile the lib/eviasorm.cpp file to take advantage
+of the features.
+
+This part of the Instructions will be updated once the library can
+be easily integrated in other projects.
 
 ## Contribute
 

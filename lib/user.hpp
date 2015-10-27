@@ -29,7 +29,19 @@ namespace dbo {
         : public table
     {
     public:
-        user();
+        user()
+        {
+            table_  = "user_obj";
+            pkeys_  = {"id_user"};
+            fields_ = {
+                "id_user",
+                "firstname",
+                "lastname",
+                "email",
+                "date_created",
+                "date_updated"
+            };
+        }
     };
 }
 }

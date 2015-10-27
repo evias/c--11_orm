@@ -21,8 +21,19 @@ limitations under the License.
 #include "query.hpp"
 #include "row.hpp"
 #include "statement.hpp"
+#include "table.hpp"
+#include "user.hpp"
 
 using namespace evias;
 using namespace dbo;
 
+/**
+ * evias::dbo::func_store_to_string static
+ * field str_.
+ **/
 std::string func_store_to_string::str_ = "";
+
+/**
+ * evias::dbo::table static field conn_policy_.
+ **/
+std::string table::conn_policy_ = "";

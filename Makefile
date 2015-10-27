@@ -11,9 +11,7 @@ CORE = build/main.o \
 	build/test.o \
 	build/test_suite.o
 
-ORM_OBJECTS = build/eviasorm.o\
-			build/table.o \
-			build/user.o
+ORM_OBJECTS = build/eviasorm.o
 
 TEST_OBJECTS = build/sql_queries.o
 
@@ -35,8 +33,6 @@ buildLib :
 	@echo " "
 	@echo " - build of C++11-ORM ${SRC_DIR}/"
 	${CXX} ${CXX_OPTS} -c ${SRC_DIR}/eviasorm.cpp -o build/eviasorm.o
-	${CXX} ${CXX_OPTS} -c ${SRC_DIR}/table.cpp -o build/table.o
-	${CXX} ${CXX_OPTS} -c ${SRC_DIR}/user.cpp -o build/user.o
 
 buildTests :
 	@echo " "

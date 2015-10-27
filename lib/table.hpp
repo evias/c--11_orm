@@ -24,9 +24,12 @@ limitations under the License.
 #include <vector>
 #include <tuple>
 #include <iostream>
+#include <algorithm>
+#include <stdexcept>
 #include <pqxx/pqxx>
 #include "row.hpp"
 #include "query.hpp"
+#include "statement.hpp"
 
 namespace evias {
 namespace dbo {
@@ -42,7 +45,18 @@ namespace dbo {
     {
         static std::string  conn_policy_;
 
-        void _check_connection();
+        void _check_connection()
+        {
+            if (conn_policy_.empty())
+                throw std::logic_error("Please initialize the connection policy.");
+
+            if (conn_policy_.find("host") == std::string::npos
+                || conn_policy_.find("dbname") == std::string::npos
+                || conn_policy_.find("user") == std::string::npos
+                || conn_policy_.find("password") == std::string::npos)
+                throw std::logic_error(
+                      "Wrong connection policy format: host, dbname, user, password are mandatory");
+        }
 
     protected:
         std::string table_ = "";
@@ -51,24 +65,113 @@ namespace dbo {
 
     public:
         table() = default;
-        table(std::string,std::vector<std::string>);
-        table(std::string,
-              std::vector<std::string>,
-              std::vector<std::string>);
+        virtual ~table() = default;
 
-        /* Copy & move semantic */
-        table(const table&);
-        table(table&&);
+        /**
+         * Table constructor
+         *
+         * @param std::string name  The database relation name
+         * @param std::vector<std::string> fields   The fields names list
+         **/
+        table(std::string name, std::vector<std::string> fields)
+            : table_(name), fields_(fields)
+        {
+            _check_connection();
+        }
 
-        virtual ~table();
+        /**
+         * Table constructor
+         * @param string name  The database relation name
+         * @param vector<string> fields The fields names list
+         * @param vector<string> pkeys  The primary keys names
+         **/
+        table(std::string name,
+               std::vector<std::string> fields,
+               std::vector<std::string> pkeys)
+            : table_(name),
+              fields_(fields),
+              pkeys_(pkeys)
+        {
+            _check_connection();
 
-        static void set_connection_config(std::string);
+            std::vector<std::string> intersection;
+            std::for_each(pkeys.begin(), pkeys.end(), [&intersection,this] (std::string item) {
+                for (auto it : this->fields_)
+                    if (it == item) {
+                        intersection.push_back(it);
+                        break;
+                    }
+            });
 
-        pqxx::result select(where, group_by = {}, order_by = {}, limit = {});
+            if (intersection.size() != pkeys.size())
+                throw std::exception();
+        }
 
-        std::vector<std::string> get_fields();
-        std::vector<std::string> get_pkeys();
-        std::string get_table();
+        /**
+         * Copy constructor
+         * @param const table& rhs  The object to be copied
+         **/
+        table(const table& rhs)
+            : table_(rhs.table_),
+              fields_(rhs.fields_),
+              pkeys_(rhs.pkeys_)
+        {
+            _check_connection();
+        }
+
+        /**
+         * Move semantic constructor
+         * @param table&& rval  Moved object (r-value)
+         **/
+        table(table&& rval)
+            : table_(std::move(rval.table_)),
+              fields_(std::move(rval.fields_)),
+              pkeys_(std::move(rval.pkeys_))
+        {
+            _check_connection();
+        }
+
+        void set_connection_config(std::string p)
+        {
+            conn_policy_ = p;
+        }
+
+        pqxx::result select(where _where, group_by _group = {}, order_by _order = {}, limit _limit = {})
+        {
+            _check_connection();
+
+            /* following line needed because of method name 'select' */
+            using select = evias::dbo::select;
+
+            select _select(fields_);
+            evias::dbo::from   _from{table_};
+
+            using tuple_t = std::tuple<select,from,where,group_by,order_by,limit>;
+            using stmt_t  = statement<select,from,where,group_by,order_by,limit>;
+
+            stmt_t::policy_ = conn_policy_;
+
+            stmt_t my_stmt(tuple_t{
+                _select, _from, _where,
+                _group, _order, _limit});
+
+            return my_stmt();
+        }
+
+        std::vector<std::string> get_fields()
+        {
+            return this->fields_;
+        }
+
+        std::vector<std::string> get_pkeys()
+        {
+            return pkeys_;
+        }
+
+        std::string get_table()
+        {
+            return table_;
+        }
     };
 
 }
