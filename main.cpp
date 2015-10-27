@@ -18,29 +18,26 @@ limitations under the License.
 **/
 
 #include <iostream>
+#include "test/test.hpp"
+#include "test/test_suite.hpp"
+#include "test/sql_queries.hpp"
 
-#include "table.hpp"
-#include "user.hpp"
-
-using namespace evias::dbo;
 using namespace std;
+using namespace evias;
 
 int main(int argc, char** argv)
 {
-    table::set_connection_config("host=localhost,dbname=db_evias,user=psqlu,password=opendev");
+    using unit_test::test_select_query;
+    using unit_test::test_update_query;
 
-    user *u = new user();
-
-    cout << "Hello, world!" << endl;
-
-    vector<string> fields = u->get_fields();
-    for_each(fields.begin(), fields.end(), [] (string item) {
-        cout << item << endl;
+    auto test_suite = new unit_test::suite("SQL Queries Generation & Parsing", {
+        new test_select_query("Basic SQL SELECT Query Generation"),
+        new test_update_query("Basic SQL UPDATE Query Generation")
     });
 
-    cout << "Goodbye, world!" << endl;
+    test_suite->run();
+    delete test_suite;
 
-    delete u;
     return 0;
 }
 
