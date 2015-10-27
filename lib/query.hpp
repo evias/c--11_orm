@@ -39,12 +39,18 @@ namespace dbo {
     struct order_by;
     struct limit;
 
+    using std::string;
+    using std::map;
+    using std::vector;
+    using std::initializer_list;
+    using std::stringstream;
+
     /**
      * Statement part interface
      **/
     struct stmt_part
     {
-        virtual operator std::string() = 0;
+        virtual operator string() = 0;
     };
 
     /**
@@ -58,19 +64,19 @@ namespace dbo {
     struct select
         : stmt_part
     {
-        select(std::initializer_list<std::string> l)
+        select(initializer_list<string> l)
             : fields_(l)
         {};
 
-        select(std::vector<std::string> f)
+        select(vector<string> f)
             : fields_(f)
         {};
 
-        operator std::string() override
+        operator string() override
         {
-            std::string str;
+            string str;
             int i = 0;
-            std::for_each(fields_.begin(), fields_.end(), [&i, &str, this](std::string item) {
+            std::for_each(fields_.begin(), fields_.end(), [&i, &str, this](string item) {
                 str += ((i > 0) ? ", " : "") + item;
                 ++i;
             });
@@ -78,7 +84,7 @@ namespace dbo {
         }
 
     private:
-        std::vector<std::string> fields_;
+        vector<string> fields_;
     };
 
     /**
@@ -92,30 +98,30 @@ namespace dbo {
     struct update
         : stmt_part
     {
-        update(std::map<std::string, std::string> fields_values)
+        update(map<string, string> fields_values)
             : values_(fields_values)
         {};
 
-        update(std::initializer_list<std::string> l)
+        update(initializer_list<string> l)
         {
             for (auto line : l) {
-                if (line.find("=") == std::string::npos) {
+                if (line.find("=") == string::npos) {
                     table_ = line;
                     continue;
                 }
 
-                std::string p1 = line.substr(0, line.find("="));
-                std::string p2 = line.substr(line.find("=") + 1);
+                string p1 = line.substr(0, line.find("="));
+                string p2 = line.substr(line.find("=") + 1);
 
                 values_.insert(std::make_pair(p1, p2));
             }
         };
 
-        operator std::string() override
+        operator string() override
         {
-            std::string str;
+            string str;
             int i = 0;
-            std::for_each(values_.begin(), values_.end(), [&i, &str, this](std::pair<std::string,std::string> item) {
+            std::for_each(values_.begin(), values_.end(), [&i, &str, this](std::pair<string,string> item) {
                 /* Careful, there is no type cast done here to provide with a valid SQL key/value combination. */
                 str += ((i > 0) ? ", " : "") + item.first + "=" + item.second;
                 ++i;
@@ -124,8 +130,8 @@ namespace dbo {
         }
 
     private:
-        std::map<std::string,std::string> values_;
-        std::string                       table_;
+        map<string,string> values_;
+        string             table_;
     };
 
     /**
@@ -145,7 +151,7 @@ namespace dbo {
          * appended to the "DELETE" token directly
          * such that the FROM and WHERE part are set.
          */
-        operator std::string() override
+        operator string() override
         {
             return "DELETE";
         }
@@ -162,19 +168,19 @@ namespace dbo {
     struct from
         : stmt_part
     {
-        from(std::initializer_list<std::string> l)
+        from(initializer_list<string> l)
             : parts_(l)
         {}
 
-        from(std::vector<std::string> p)
+        from(vector<string> p)
             : parts_(p)
         {}
 
-        operator std::string() override
+        operator string() override
         {
-            std::string str;
+            string str;
             int i = 0;
-            std::for_each(parts_.begin(), parts_.end(), [&i, &str, this](std::string item) {
+            std::for_each(parts_.begin(), parts_.end(), [&i, &str, this](string item) {
                 str += ((i > 0) ? " " : "") + item;
                 ++i;
             });
@@ -182,7 +188,7 @@ namespace dbo {
         }
 
     private:
-        std::vector<std::string> parts_;
+        vector<string> parts_;
     };
 
     /**
@@ -196,19 +202,19 @@ namespace dbo {
     struct where
         : stmt_part
     {
-        where(std::initializer_list<std::string> l)
+        where(initializer_list<string> l)
             : conditions_(l)
         {}
 
-        where(std::vector<std::string> c)
+        where(vector<string> c)
             : conditions_(c)
         {}
 
-        operator std::string() override
+        operator string() override
         {
-            std::string str;
+            string str;
             int i = 0;
-            std::for_each(conditions_.begin(), conditions_.end(), [&i, &str, this](std::string item) {
+            std::for_each(conditions_.begin(), conditions_.end(), [&i, &str, this](string item) {
                 str += ((i > 0) ? " AND " : "") + item;
                 ++i;
             });
@@ -216,7 +222,7 @@ namespace dbo {
         }
 
     private:
-        std::vector<std::string> conditions_;
+        vector<string> conditions_;
     };
 
     /**
@@ -230,19 +236,19 @@ namespace dbo {
     struct group_by
         : stmt_part
     {
-        group_by(std::initializer_list<std::string> l)
+        group_by(initializer_list<string> l)
             : fields_(l)
         {}
 
-        group_by(std::vector<std::string> f)
+        group_by(vector<string> f)
             : fields_(f)
         {}
 
-        operator std::string() override
+        operator string() override
         {
-            std::string str;
+            string str;
             int i = 0;
-            std::for_each(fields_.begin(), fields_.end(), [&i, &str, this](std::string item) {
+            std::for_each(fields_.begin(), fields_.end(), [&i, &str, this](string item) {
                 str += ((i > 0) ? ", " : "") + item;
                 ++i;
             });
@@ -250,7 +256,7 @@ namespace dbo {
         }
 
     private:
-        std::vector<std::string> fields_;
+        vector<string> fields_;
     };
 
     /**
@@ -264,19 +270,19 @@ namespace dbo {
     struct order_by
         : stmt_part
     {
-        order_by(std::initializer_list<std::string> l)
+        order_by(initializer_list<string> l)
             : parts_(l)
         {}
 
-        order_by(std::vector<std::string> p)
+        order_by(vector<string> p)
             : parts_(p)
         {}
 
-        operator std::string() override
+        operator string() override
         {
-            std::string str;
+            string str;
             int i = 0;
-            std::for_each(parts_.begin(), parts_.end(), [&i, &str, this](std::string item) {
+            std::for_each(parts_.begin(), parts_.end(), [&i, &str, this](string item) {
                 str += ((i > 0) ? ", " : "") + item;
                 ++i;
             });
@@ -284,7 +290,7 @@ namespace dbo {
         }
 
     private:
-        std::vector<std::string> parts_;
+        vector<string> parts_;
     };
 
     /**
@@ -298,9 +304,9 @@ namespace dbo {
     struct limit
         : stmt_part
     {
-        limit(std::initializer_list<int> l)
+        limit(initializer_list<int> l)
         {
-            std::vector<int> v = l;
+            vector<int> v = l;
             if (v.size() < 2) {
                 limit_  = v.empty() ? 0 : v.at(0);
                 offset_ = 0;
@@ -315,12 +321,12 @@ namespace dbo {
             : limit_(lim), offset_(offset)
         {}
 
-        operator std::string() override
+        operator string() override
         {
             if (limit_ == 0 && offset_ == 0)
                 return "";
 
-            std::stringstream ss;
+            stringstream ss;
             ss << "LIMIT " << limit_;
             if (offset_ != 0)
                 ss << " OFFSET " << offset_;

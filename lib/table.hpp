@@ -38,30 +38,33 @@ namespace dbo {
     using evias::dbo::from;
     using evias::dbo::where;
 
+    using std::string;
+    using std::vector;
+
     /**
      * Database table class
      **/
     class table
     {
-        static std::string  conn_policy_;
+        static string  conn_policy_;
 
         void _check_connection()
         {
             if (conn_policy_.empty())
                 throw std::logic_error("Please initialize the connection policy.");
 
-            if (conn_policy_.find("host") == std::string::npos
-                || conn_policy_.find("dbname") == std::string::npos
-                || conn_policy_.find("user") == std::string::npos
-                || conn_policy_.find("password") == std::string::npos)
+            if (conn_policy_.find("host") == string::npos
+                || conn_policy_.find("dbname") == string::npos
+                || conn_policy_.find("user") == string::npos
+                || conn_policy_.find("password") == string::npos)
                 throw std::logic_error(
                       "Wrong connection policy format: host, dbname, user, password are mandatory");
         }
 
     protected:
-        std::string table_ = "";
-        std::vector<std::string>  pkeys_ = {};
-        std::vector<std::string>  fields_ = {};
+        string table_ = "";
+        vector<string>  pkeys_ = {};
+        vector<string>  fields_ = {};
 
     public:
         table() = default;
@@ -73,7 +76,7 @@ namespace dbo {
          * @param std::string name  The database relation name
          * @param std::vector<std::string> fields   The fields names list
          **/
-        table(std::string name, std::vector<std::string> fields)
+        table(string name, vector<string> fields)
             : table_(name), fields_(fields)
         {
             _check_connection();
@@ -85,16 +88,16 @@ namespace dbo {
          * @param vector<string> fields The fields names list
          * @param vector<string> pkeys  The primary keys names
          **/
-        table(std::string name,
-               std::vector<std::string> fields,
-               std::vector<std::string> pkeys)
+        table(string name,
+               vector<string> fields,
+               vector<string> pkeys)
             : table_(name),
               fields_(fields),
               pkeys_(pkeys)
         {
             _check_connection();
 
-            std::vector<std::string> intersection;
+            vector<string> intersection;
             std::for_each(pkeys.begin(), pkeys.end(), [&intersection,this] (std::string item) {
                 for (auto it : this->fields_)
                     if (it == item) {
@@ -158,17 +161,17 @@ namespace dbo {
             return my_stmt();
         }
 
-        std::vector<std::string> get_fields()
+        vector<string> get_fields()
         {
             return this->fields_;
         }
 
-        std::vector<std::string> get_pkeys()
+        vector<string> get_pkeys()
         {
             return pkeys_;
         }
 
-        std::string get_table()
+        string get_table()
         {
             return table_;
         }
