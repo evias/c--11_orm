@@ -18,6 +18,9 @@ limitations under the License.
 **/
 
 #include "for_each.hpp"
+#include "query.hpp"
+#include "row.hpp"
+#include "statement.hpp"
 
 using namespace evias;
 using namespace dbo;
