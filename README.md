@@ -19,7 +19,7 @@ execution of the test suite on any other operating system is highly appreciated.
 
 * g++-4.7
 * libpqxx-3.1
-* libpqxx-dev
+* libpqxx-dev [for compilation only]
 
 ## Use instructions
 
