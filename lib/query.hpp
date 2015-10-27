@@ -18,7 +18,7 @@ limitations under the License.
 **/
 
 #ifndef QUERY_HPP
-#define	QUERY_HPP
+#define QUERY_HPP
 
 #include <vector>
 #include <map>
@@ -99,6 +99,11 @@ namespace dbo {
         update(std::initializer_list<std::string> l)
         {
             for (auto line : l) {
+                if (line.find("=") == std::string::npos) {
+                    table_ = line;
+                    continue;
+                }
+
                 std::string p1 = line.substr(0, line.find("="));
                 std::string p2 = line.substr(line.find("=") + 1);
 
@@ -115,11 +120,12 @@ namespace dbo {
                 str += ((i > 0) ? ", " : "") + item.first + "=" + item.second;
                 ++i;
             });
-            return str.size() > 0 ? "UPDATE " + str : "";
+            return str.size() > 0 ? "UPDATE " + table_ + " SET " + str : "";
         }
 
     private:
         std::map<std::string,std::string> values_;
+        std::string                       table_;
     };
 
     /**
@@ -141,7 +147,7 @@ namespace dbo {
          */
         operator std::string() override
         {
-            return "DELETE ";
+            return "DELETE";
         }
     };
 
@@ -330,5 +336,5 @@ namespace dbo {
 }
 
 
-#endif	/* QUERY_HPP */
+#endif  /* QUERY_HPP */
 
