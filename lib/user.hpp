@@ -28,19 +28,8 @@ namespace dbo {
     class user
         : public table
     {
-    protected:
-        std::string table_                = "user_obj";
-
-        std::vector<std::string>  pkeys_  = {"id_user"};
-
-        std::vector<std::string>  fields_ = {
-            "id_user",
-            "firstname",
-            "lastname",
-            "email",
-            "date_created",
-            "date_updated"
-        };
+    public:
+        user();
     };
 }
 }

@@ -141,3 +141,18 @@ pqxx::result table::select(where _where, group_by _group, order_by _order, limit
 
     return my_stmt();
 }
+
+std::vector<std::string> table::get_fields()
+{
+    return this->fields_;
+}
+
+std::vector<std::string> table::get_pkeys()
+{
+    return pkeys_;
+}
+
+std::string table::get_table()
+{
+    return table_;
+}

@@ -21,3 +21,17 @@ limitations under the License.
 
 using namespace evias;
 using namespace dbo;
+
+user::user()
+{
+    table_  = "user_obj";
+    pkeys_  = {"id_user"};
+    fields_ = {
+        "id_user",
+        "firstname",
+        "lastname",
+        "email",
+        "date_created",
+        "date_updated"
+    };
+}

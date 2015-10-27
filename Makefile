@@ -3,7 +3,7 @@ TARGET=c++11_orm
 JUNK_DIR=build
 SRC_DIR=lib
 
-CXX = g++-4.7
+CXX = g++
 CXX_OPTS = --std=c++0x -Ilib/ -I/usr/include
 PQXX_OPTS = -L/usr/lib -lpqxx -lpq
 

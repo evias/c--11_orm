@@ -7,16 +7,28 @@
 
 #include <iostream>
 
+#include "table.hpp"
 #include "user.hpp"
+
+using namespace evias::dbo;
+using namespace std;
 
 int main(int argc, char** argv)
 {
     table::set_connection_config("host=localhost,dbname=db_evias,user=psqlu,password=opendev");
 
-    std::cout << "Hello, world!" << std::endl;
-    std::cout << dbo::user::fields.size() << std::endl;
-    std::cout << "Goodbye, world!" << std::endl;
+    user *u = new user();
 
+    cout << "Hello, world!" << endl;
+
+    vector<string> fields = u->get_fields();
+    for_each(fields.begin(), fields.end(), [] (string item) {
+        cout << item << endl;
+    });
+
+    cout << "Goodbye, world!" << endl;
+
+    delete u;
     return 0;
 }
 

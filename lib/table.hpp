@@ -44,7 +44,7 @@ namespace dbo {
 
         void _check_connection();
 
-    protected :
+    protected:
         std::string table_ = "";
         std::vector<std::string>  pkeys_ = {};
         std::vector<std::string>  fields_ = {};
@@ -65,6 +65,10 @@ namespace dbo {
         static void set_connection_config(std::string);
 
         pqxx::result select(where, group_by = {}, order_by = {}, limit = {});
+
+        std::vector<std::string> get_fields();
+        std::vector<std::string> get_pkeys();
+        std::string get_table();
     };
 
 }
